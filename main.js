@@ -79,11 +79,8 @@ window.onload = function(){
 					});
 				return scene;
 			}
+			core.replaceScene(game_scene());
 	};
-var initializer = function(){
-
-} 
 
 	core.start();
-	core.replaceScene(game_scene())
 };
