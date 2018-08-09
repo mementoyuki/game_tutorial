@@ -3,43 +3,40 @@ enchant();
 window.onload = function(){
 
 	var core = new Core(320,320);
-	core.preload('images/chara1.png','images/end.png');
+	core.preload('images/chara1.png','images/end.png','images/monster/monster3.gif','images/effect0.png');
 	core.fps = 10;
 
 	core.onload = function(){
-
+		core.keybind('Z'.charCodeAt(0), 'a');
 
 		var game_scene = function(){
 			var scene = new Scene();
 
-			//define of Bear
-			var Bear = Class.create(Sprite,{
+			//define of Bat
+			var Bat = Class.create(Sprite,{
 				initialize:function(x,y){
-					Sprite.call(this,32,32);	
-						this.image = core.assets['images/chara1.png'];
+					Sprite.call(this,48,48);	
+						this.image = core.assets['images/monster/monster3.gif'];
 						this.x = x;
 						this.y = y;
-						this.frame = rand(5)
-						this.opacity = rand(100)/100;
+						this.frame = 1; 
 						this.tl
 							.moveBy(rand(100),-rand(10),rand(100),enchant.Easing.BOUNCE_EASEOUT)
-							.moveBy(-rand(10),rand(100),rand(100),enchant.Easing.BOUNCE_EASEOUT)
-							.fadeOut(5)
-							.fadeIn(5)
+							.moveBy(-rand(100),rand(10),rand(100),enchant.Easing.BOUNCE_EASEOUT)
 							.loop();
 						this.on('enterframe',function(){
 							if(this.within(bear,10)){
-
 								core.replaceScene(gameover_scene());
 							};
+							this.frame = (this.age % 3) + 8
 						})
 					scene.addChild(this);
 					}
 			});
-			//random bears
-			var bears = [];
+			//random bats
+			var bats = [];
 				for(var i=0 ; i < 10 ; ++i){
-					bears[i] = new Bear(rand(320),rand(320));
+					bats[i] = new Bat(rand(320),rand(320));
 				}
 
 			//config for 'bear'
@@ -57,7 +54,33 @@ window.onload = function(){
 
 			});
 			scene.addChild(bear);
-			return scene;
+			//config for bullets
+			var Bullet = Class.create(Sprite,{
+				initialize:function(){
+					Sprite.call(this,16,16);
+					this.image = core.assets['images/effect0.png']
+					this.frame = 1;
+					this.x = bear.x + 10;
+					this.y = bear.y + 20;
+					this.on('enterframe',function(){
+						this.x +=10;
+						for(var i in bats){
+							if(this.within(bats[i],10)){
+								scene.removeChild(this);
+								scene.removeChild(bats[i]);
+								bat_counter += 1; 
+							}
+						}
+					})
+				}
+			})
+
+			scene.on('abuttondown',function(){
+				var bullet = new Bullet;
+				scene.addChild(bullet);
+			})
+
+					return scene;
 		}
 
 			//random function
@@ -79,6 +102,13 @@ window.onload = function(){
 					});
 				return scene;
 			}
+
+			var gameclear_scene = function(){
+				var scene = new Scene();
+				scene.backgroundColor = 'red';
+			}
+
+
 			core.replaceScene(game_scene());
 	};
 
