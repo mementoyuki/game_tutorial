@@ -8,6 +8,7 @@ window.onload = function(){
 
 	core.onload = function(){
 		core.keybind('Z'.charCodeAt(0), 'a');
+		var bat_counter = 0;
 
 		var game_scene = function(){
 			var scene = new Scene();
@@ -70,6 +71,10 @@ window.onload = function(){
 								scene.removeChild(bats[i]);
 								bat_counter += 1; 
 							}
+							if(bat_counter > 10 ){
+								core.replaceScene(gameclear_scene());
+								bat_counter = 0;
+							}
 						}
 					})
 				}
@@ -83,7 +88,7 @@ window.onload = function(){
 					return scene;
 		}
 
-			//random function
+				//random function
 			function rand(n) {
 				return Math.floor(Math.random() * (n + 1));
 			}
@@ -99,13 +104,26 @@ window.onload = function(){
 					end.tl.moveBy(0,70,100).and().fadeIn(100);
 					scene.on('touchstart',function(){
 						core.replaceScene(game_scene());
+						bat_counter = 0;
 					});
 				return scene;
 			}
 
 			var gameclear_scene = function(){
 				var scene = new Scene();
-				scene.backgroundColor = 'red';
+				scene.backgroundColor = 'red';	
+				scene.on('touchstart',function(){
+						core.replaceScene(game_scene());
+						bat_counter = 0;
+					});
+					var label = new Label;
+					label.x = 70;
+					label.y = 70;
+					label.text = 'GAME CLEAR';
+					label.color = 'white';
+					scene.addChild(label);
+				return scene;
+	
 			}
 
 
